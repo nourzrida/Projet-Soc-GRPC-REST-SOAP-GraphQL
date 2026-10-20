@@ -1,0 +1,40 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+            allowedHeaders: "*"
+      routes:
+        # 1. Route vers le Service Patient (REST)
+        - id: patient-route
+          uri: http://patient-service:8081
+          predicates:
+            - Path=/api/patients/*
+
+        # 2. Route vers le Service Dossier (SOAP)
+        - id: dossier-route
+          uri: http://dossier-service:8082
+          predicates:
+            - Path=/ws/**
+
+        # 3. Route vers le Service Praticien (GraphQL)
+        - id: praticien-route
+          uri: http://praticien-service:8083
+          predicates:
+            - Path=/graphql/**
+
+        # 4. Route vers l'Orchestrateur (Le plus important pour le client)
+        - id: orchestrator-route
+          uri: http://orchestrator-service:8084
+          predicates:
+            - Path=/dossier-complet/**, /smart-intervention/**

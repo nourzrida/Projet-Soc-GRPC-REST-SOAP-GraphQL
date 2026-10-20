@@ -1,0 +1,30 @@
+type Praticien {
+    id: ID
+    nom: String
+    prenom: String
+    specialite: String
+    hopital: String
+    ville: String
+    description: String
+}
+
+# Les requêtes possibles (Lecture / GET)
+
+
+# Les modifications possibles (Écriture / POST)
+type Mutation {
+    createPraticien(
+        nom: String,
+        prenom: String,
+        specialite: String,
+        hopital: String,
+        ville: String,        # Ajouté
+        description: String   # Ajouté
+    ): Praticien
+}
+type Query {
+    allPraticiens: [Praticien]
+    trouverMedecinParVille(ville: String): [Praticien]
+    # New Smart Query
+    trouverMedecinUrgence(ville: String, specialite: String): [Praticien]
+}

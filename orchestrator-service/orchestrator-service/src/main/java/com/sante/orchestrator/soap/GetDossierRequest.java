@@ -1,0 +1,16 @@
+package com.sante.orchestrator.soap;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import lombok.Data;
+
+@Data
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "getDossierRequest", namespace = "http://www.sante.com/dossier")
+public class GetDossierRequest {
+
+    @XmlElement(required = true)
+    private String idPatient;
+}

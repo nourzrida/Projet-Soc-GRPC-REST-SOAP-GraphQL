@@ -1,0 +1,30 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://www.sante.com/dossier"
+           targetNamespace="http://www.sante.com/dossier"
+           elementFormDefault="qualified">
+
+    <xs:element name="getDossierRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="idPatient" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getDossierResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="dossier" type="tns:dossier"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="dossier">
+        <xs:sequence>
+            <xs:element name="idPatient" type="xs:string"/>
+            <xs:element name="dateMiseAJour" type="xs:string"/>
+            <xs:element name="traitement" type="xs:string"/>
+            <xs:element name="medecinTraitant" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

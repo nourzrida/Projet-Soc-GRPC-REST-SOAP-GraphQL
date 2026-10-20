@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.sante.urgence.stubs"; // Où le code sera généré
+
+package urgence;
+
+// Le Service
+service UrgenceService {
+  rpc EnvoyerAlerte (Alerte) returns (AlerteReponse);
+}
+
+// Les Messages (Les données)
+message Alerte {
+  string id_patient = 1;
+  string type_urgence = 2; // Accident, Malaise, Feu...
+  string localisation = 3;
+}
+
+message AlerteReponse {
+  string message = 1;
+  bool equipe_envoyee = 2;
+}

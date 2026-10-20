@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # --- 1. NOUVEAU : BASE DE DONNÉES MYSQL ---
+  mysqldb:
+    image: mysql:8.0
+    container_name: mysqldb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=patient_db
+    ports:
+      - "3307:3306" # On utilise le port 3307 sur ton PC pour éviter les conflits
+    volumes:
+      - db_data:/var/lib/mysql # Pour garder les données même si tu éteins Docker
+
+  # --- 2. Service Patient (REST) - Connecté à MySQL ---
+  patient-service:
+    image: patient-service:v1
+    container_name: patient-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysqldb # <--- IMPORTANT : Il attend que la base soit prête
+
+  # --- 3. Service Dossier (SOAP) ---
+  dossier-service:
+    image: dossier-service:v1
+    container_name: dossier-service
+    ports:
+      - "8082:8082"
+
+  # --- 4. Service Praticien (GraphQL) ---
+  praticien-service:
+    image: praticien-service:v1
+    container_name: praticien-service
+    ports:
+      - "8083:8083"
+
+  # --- 5. Service Urgence (gRPC) ---
+  urgence-service:
+    image: urgence-service:v1
+    container_name: urgence-service
+    ports:
+      - "9090:9090"
+
+  # --- 6. Orchestrateur (Le Chef) ---
+  orchestrator-service:
+    image: orchestrator-service:v1
+    container_name: orchestrator-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SERVICE_PATIENT_URL=http://patient-service:8081
+      - SERVICE_DOSSIER_URL=http://dossier-service:8082/ws
+      - SERVICE_PRATICIEN_URL=http://praticien-service:8083/graphql
+      - GRPC_CLIENT_URGENCESERVICE_ADDRESS=static://urgence-service:9090
+    depends_on:
+      - patient-service
+      - dossier-service
+      - praticien-service
+      - urgence-service
+  # ... tes autres services ...
+
+  # 6. LA GATEWAY (Le Gardien)
+  gateway-service:
+    image: gateway-service:v1
+    container_name: gateway-service
+    ports:
+      - "8888:8888" # C'est le SEUL port que le client utilisera
+    depends_on:
+      - patient-service
+      - dossier-service
+      - praticien-service
+      - orchestrator-service
+# Définition du volume pour la persistance des données
+volumes:
+  db_data:
